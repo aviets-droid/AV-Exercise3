@@ -10,22 +10,26 @@ const ptwochar = "X";
 const ponechar = "O";
 const ptwoname = "Player Two";
 const ponename = "Player One";
+
 var filehandle;
 var myturn;
-var igofirst;
+var mychar = "";
 
 var game = {
-  state: "Initial",
+  state: "NewGame",
   turn: "",
+  lastwinner: "",
   diceroll: 0,
   poneGuess: 0,
   ptwoGuess: 0
 };
 
-// Data
+// JSON File related/internal game state functions
 
 /** Create json file to store game state */
 async function createFile() {
+  resetGame();
+  mychar = ponechar; // Set this player to O
   const opts = {
     startIn: 'desktop',
     suggestedName: 'TTTdata.json',
@@ -44,13 +48,46 @@ async function createFile() {
   await file.close();
 }
 
-/** Load file */
-// async function readData() {
-//   const fs = require('fs').promises;
-//   try {
-//     const data = await 
-//   }
-// }
+/** Loads file opened by user, to 'join' a game */
+async function loadFile() {
+  mychar = ptwochar; // Set this player to X
+  const opts1 = {
+    startIn: 'desktop',
+  }
+  filehandle = await window.showOpenFilePicker(opts1);
+}
+
+/** Read data from json file, update internal state with read data */
+async function readFile() {
+  const file1 = await filehandle.getFile();
+  const contents1 = await file1.text();
+  const data = JSON.parse(contents1);
+  game.state = data.state;
+  game.turn = data.turn;
+  game.lastwinner = data.lastwinner;
+  game.diceroll = data.diceroll;
+  game.poneGuess = data.poneGuess;
+  game.ptwoGuess = data.ptwoGuess;
+}
+
+/** Stringify internal state, update json file with new data */
+async function updateFile() {
+  const file2 = await filehandle.createWritable();
+  let contents2 = JSON.stringify(game);
+  await file2.write(contents2);
+  await file2.close();
+}
+
+/** Reset internal game state, clear table; use to reset the board after 1st run of game */
+function resetGame() {
+  game.state = "NextGame";
+  game.turn = "";
+  // game.lastwinner = ""; Update when next game is about to start (cs_buttonclick)
+  game.diceroll = 0;
+  game.poneGuess = 0;
+  game.ptwoGuess = 0;
+  cleartable();
+}
 
 // Computational functions
 
@@ -159,30 +196,41 @@ function cellclick(event) {
   }
 }
 
-/** Updates Clear/Start button based on game state. */
+/** Updates Clear/Start button */
 function cs_buttonclick() {
   let btn = document.getElementById("cs_btn");
-  let tbl = document.getElementById("tbl");
   if (btn.textContent == "Start") {
     btn.textContent = "Clear";
-    createFile();
   }
   else {
     btn.textContent = "Start";
     document.getElementById("title").innerHTML = "Tic Tac Toe";
-    cleartable();
+    game.lastwinner = game.turn;
+    resetGame();
   }
 }
 
 function ng_buttonclick() {
-  //
+  let ngbtn = document.getElementById("ng_btn");
+  createFile();
 }
 
 function jg_buttonclick() {
-  //
+  let jgbtn = document.getElementById("jg_btn");
 }
 
 // UI functions
+
+function updateTitle(ttxt) {
+  let ttl = document.getElementById("title");
+  ttl.textContent = ttxt;
+}
+
+/** Update player character display */
+function updateMyChar() {
+  let my = document.getElementById("pchar");
+  my.textContent = "You are: " + mychar;
+}
 
 /** Creates the table/playing board visually. */
 function table() {
@@ -204,6 +252,7 @@ function cs_button() {
   let cs_button = document.createElement("button");
   cs_button.id = "cs_btn";
   cs_button.textContent = "Start";
+  cs_button.disabled = true;
   cs_button.addEventListener("click", cs_buttonclick);
   document.body.appendChild(cs_button);
 }

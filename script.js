@@ -17,43 +17,32 @@ var myturn;
 
 /** Create json file to store game state */
 async function createFile() {
-  filehandle = await window.showSaveFilePicker({
-    suggestedName: 'data.json',
+
+  const opts = {
+    startIn: 'desktop',
+    suggestedName: 'TTTdata.json',
     types: [{
-      description: 'JSON File',
+      description: 'TTT Local Save',
       accept: {
-        'application/json': ['.json'],
-      },
-    }],
-  });
+        'text/plain': ['.json'],
+      }
+    }]
+  }
+
+  filehandle = await window.showSaveFilePicker(opts);
   const file = await filehandle.createWritable();
-  const contents = '{"gamestate": -1}';
+  const contents = '{"gamestate": -1},"ponechoice": 0,"ptwochoice": 0';
   await file.write(contents);
   await file.close();
 }
 
 /** Load file */
-async function loadFile() {
-  filehandle = await window.showOpenFilePicker({
-    startIn: 'desktop'
-  });
-}
-
-async function getGamestate() {
-  if (filehandle == null) {
-    alert("filehandle is null");
-    return -2;
-  }
-  const file1 = await filehandle.getFile();
-}
-
-async function setGamestate(state) {
-  if (filehandle == null) {
-    alert("filehandle is null");
-    return -2;
-  }
-  const file2 = await filehandle.getFile();
-}
+// async function readData() {
+//   const fs = require('fs').promises;
+//   try {
+//     const data = await 
+//   }
+// }
 
 // Computational functions
 
@@ -177,6 +166,14 @@ function cs_buttonclick() {
   }
 }
 
+function ng_buttonclick() {
+  //
+}
+
+function jg_buttonclick() {
+  //
+}
+
 // UI functions
 
 /** Creates the table/playing board visually. */
@@ -203,8 +200,26 @@ function cs_button() {
   document.body.appendChild(cs_button);
 }
 
+function ng_button() {
+  let ng_button = document.createElement("button");
+  ng_button.id = "ng_btn";
+  ng_button.textContent = "New Game";
+  ng_button.addEventListener("click", ng_buttonclick);
+  document.body.appendChild(ng_button);
+}
+
+function jg_button() {
+  let jg_button = document.createElement("button");
+  jg_button.id = "cs_btn";
+  jg_button.textContent = "Join Game";
+  jg_button.addEventListener("click", jg_buttonclick);
+  document.body.appendChild(jg_button);
+}
+
 /** Loads the table/playing board and Clear/Start button. */
 function vis_loadpage() {
   table();
   cs_button();
+  ng_button();
+  jg_button();
 }

@@ -3,6 +3,7 @@
 // CS 491 Exercise 3
 // Tic Tac Toe - Local Multiplayer
 
+const dice = 6; 
 const rows = 3;
 const cols = 3;
 const whitespace = "\u00A0";
@@ -12,13 +13,15 @@ const ptwoname = "Player Two";
 const ponename = "Player One";
 
 var filehandle;
-var myturn;
+var myturn = false;
 var mychar = "";
 
 var game = {
   state: "NewGame",
   turn: "",
   lastwinner: "",
+  poneconn: false,
+  ptwoconn: false,
   diceroll: 0,
   poneGuess: 0,
   ptwoGuess: 0
@@ -30,6 +33,8 @@ var game = {
 async function createFile() {
   resetGame();
   mychar = ponechar; // Set this player to O
+  game.poneconn = true;
+
   const opts = {
     startIn: 'desktop',
     suggestedName: 'TTTdata.json',
@@ -51,10 +56,14 @@ async function createFile() {
 /** Loads file opened by user, to 'join' a game */
 async function loadFile() {
   mychar = ptwochar; // Set this player to X
+
   const opts1 = {
     startIn: 'desktop',
   }
   filehandle = await window.showOpenFilePicker(opts1);
+  readFile();
+  game.ptwoconn = true;
+  updateFile();
 }
 
 /** Read data from json file, update internal state with read data */
@@ -82,7 +91,7 @@ async function updateFile() {
 function resetGame() {
   game.state = "NextGame";
   game.turn = "";
-  // game.lastwinner = ""; Update when next game is about to start (cs_buttonclick)
+  // game.lastwinner is updated separately to not overwrite previous winner
   game.diceroll = 0;
   game.poneGuess = 0;
   game.ptwoGuess = 0;
@@ -90,6 +99,11 @@ function resetGame() {
 }
 
 // Computational functions
+
+/** Roll a die with n faces*/
+function rollDie(n) {
+  return Math.floor(Math.random() * n) + 1;
+}
 
 /** Checks if innerText across an array of cells are equal. 
  * @param {Object[]} cellarr
@@ -157,8 +171,8 @@ function checkwin() {
   }
 
   if (iswinner) {
-    document.getElementById("title").innerHTML = gamestate + " wins";
-    gamestate = "GameWin";
+    game.lastwinner = game.turn;
+    updateTurnDisplay(game.turn + " has won!")
     tbl.removeEventListener('click', com_cellclick);
   }
 }
@@ -204,19 +218,30 @@ function cs_buttonclick() {
   }
   else {
     btn.textContent = "Start";
-    document.getElementById("title").innerHTML = "Tic Tac Toe";
-    game.lastwinner = game.turn;
     resetGame();
   }
 }
 
 function ng_buttonclick() {
-  let ngbtn = document.getElementById("ng_btn");
   createFile();
 }
 
 function jg_buttonclick() {
-  let jgbtn = document.getElementById("jg_btn");
+  loadFile();
+}
+
+function sg_buttonclick() {
+  let guesselem = document.getElementById("dg");
+  let guess = guesselem.textContent;
+
+  readFile(); // Ensure internal state is updated
+  if (mychar == ponechar) {
+    game.poneGuess = guess;
+  }
+  else {
+    game.ptwoGuess = guess;
+  }
+  updateFile();
 }
 
 // UI functions
@@ -226,10 +251,15 @@ function updateTitle(ttxt) {
   ttl.textContent = ttxt;
 }
 
-/** Update player character display */
-function updateMyChar() {
-  let my = document.getElementById("pchar");
-  my.textContent = "You are: " + mychar;
+/** Update turn display */
+function updateTurnDisplay() {
+  let my = document.getElementById("mt");
+  if (myturn) {
+    my.textContent = "It is your turn";
+  }
+  else {
+    my.textContent = "It is your opponent's turn";
+  }
 }
 
 /** Creates the table/playing board visually. */
@@ -271,6 +301,19 @@ function jg_button() {
   jg_button.textContent = "Join Game";
   jg_button.addEventListener("click", jg_buttonclick);
   document.body.appendChild(jg_button);
+}
+
+function input_text(placeholder_value) {
+  let inp = document.createElement("INPUT");
+  inp.setAttribute("type", "text");
+  inp.id = "dg";
+}
+
+function sg_button() {
+  let sg_button = document.createElement("button");
+  sg_button.id = "sg_button";
+  sg_button.textContent = "Submit Guess";
+  //
 }
 
 /** Loads the table/playing board and Clear/Start button. */

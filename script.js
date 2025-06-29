@@ -307,6 +307,7 @@ function input_text(placeholder_value) {
   let inp = document.createElement("INPUT");
   inp.setAttribute("type", "text");
   inp.id = "dg";
+  inp.setAttribute("placeholder", placeholder_value);
 }
 
 function sg_button() {
@@ -322,4 +323,6 @@ function vis_loadpage() {
   cs_button();
   ng_button();
   jg_button();
+  input_text("Enter number 1-6");
+  sg_button();
 }

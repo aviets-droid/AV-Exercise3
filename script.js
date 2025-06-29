@@ -12,12 +12,20 @@ const ptwoname = "Player Two";
 const ponename = "Player One";
 var filehandle;
 var myturn;
+var igofirst;
+
+var game = {
+  state: "Initial",
+  turn: "",
+  diceroll: 0,
+  poneGuess: 0,
+  ptwoGuess: 0
+};
 
 // Data
 
 /** Create json file to store game state */
 async function createFile() {
-
   const opts = {
     startIn: 'desktop',
     suggestedName: 'TTTdata.json',
@@ -31,7 +39,7 @@ async function createFile() {
 
   filehandle = await window.showSaveFilePicker(opts);
   const file = await filehandle.createWritable();
-  const contents = '{"gamestate": -1},"ponechoice": 0,"ptwochoice": 0';
+  const contents = JSON.stringify(game);
   await file.write(contents);
   await file.close();
 }

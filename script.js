@@ -74,6 +74,8 @@ async function readFile() {
   game.state = data.state;
   game.turn = data.turn;
   game.lastwinner = data.lastwinner;
+  game.poneconn = data.poneconn;
+  game.ptwoconn = data.ptwoconn;
   game.diceroll = data.diceroll;
   game.poneGuess = data.poneGuess;
   game.ptwoGuess = data.ptwoGuess;
@@ -103,6 +105,35 @@ function resetGame() {
 /** Roll a die with n faces*/
 function rollDie(n) {
   return Math.floor(Math.random() * n) + 1;
+}
+
+function determineFirst() {
+  readFile();
+  let dr = rollDie(6);
+  onediff = Math.abs(dr - game.poneGuess);
+  twodiff = Math.abs(dr - game.ptwoGuess);
+
+  if (onediff == twodiff) {
+    updateTurnDisplay("Both players chose the same number; please make a different guess");
+  }
+  else if (onediff < twodiff) {
+    game.turn = ponechar;
+  }
+  else {
+    game.turn = ptwochar;
+  }
+  updateFile();
+
+  if (mychar == game.turn) {
+    myturn = true;
+  }
+  else {
+    myturn = false;
+  }
+}
+
+function play() {
+  //
 }
 
 /** Checks if innerText across an array of cells are equal. 
@@ -205,8 +236,9 @@ function cleartable() {
  */
 function cellclick(event) {
   let clickedcell = event.target;
-  if (clickedcell.textContent != ptwochar && clickedcell.textContent != ponechar) {
-    clickedcell.textContent = ponechar;
+  if (myturn) {
+    clickedcell.textContent = mychar;
+    checkwin();
   }
 }
 
@@ -242,6 +274,7 @@ function sg_buttonclick() {
     game.ptwoGuess = guess;
   }
   updateFile();
+  determineFirst();
 }
 
 // UI functions

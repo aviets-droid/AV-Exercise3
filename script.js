@@ -16,7 +16,7 @@ var myturn;
 // Data
 
 /** Create json file to store game state */
-async function createfile() {
+async function createFile() {
   filehandle = await window.showSaveFilePicker();
   // filehandle = await window.showSaveFilePicker({
   //   suggestedName: 'data.json',
@@ -169,7 +169,7 @@ function cs_buttonclick() {
   let tbl = document.getElementById("tbl");
   if (btn.textContent == "Start") {
     btn.textContent = "Clear";
-    createfile();
+    createFile();
   }
   else {
     btn.textContent = "Start";

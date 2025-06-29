@@ -17,16 +17,15 @@ var myturn;
 
 /** Create json file to store game state */
 async function createFile() {
-  filehandle = await window.showSaveFilePicker();
-  // filehandle = await window.showSaveFilePicker({
-  //   suggestedName: 'data.json',
-  //   types: [{
-  //     description: 'JSON File',
-  //     accept: {
-  //       'application/json': ['.json'],
-  //     },
-  //   }],
-  // });
+  filehandle = await window.showSaveFilePicker({
+    suggestedName: 'data.json',
+    types: [{
+      description: 'JSON File',
+      accept: {
+        'application/json': ['.json'],
+      },
+    }],
+  });
   const file = await filehandle.createWritable();
   const contents = '{"gamestate": -1}';
   await file.write(contents);

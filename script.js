@@ -32,8 +32,6 @@ var game = {
 /** Create json file to store game state */
 async function createFile() {
   resetGame();
-  mychar = ponechar; // Set this player to O
-  game.poneconn = true;
 
   const opts = {
     startIn: 'desktop',
@@ -55,15 +53,10 @@ async function createFile() {
 
 /** Loads file opened by user, to 'join' a game */
 async function loadFile() {
-  mychar = ptwochar; // Set this player to X
-
   const opts1 = {
     startIn: 'desktop',
   }
   filehandle = await window.showOpenFilePicker(opts1);
-  readFile();
-  game.ptwoconn = true;
-  updateFile();
 }
 
 /** Read data from json file, update internal state with read data */
@@ -231,6 +224,25 @@ function cleartable() {
   }
 }
 
+/** Start game */
+function start() {
+  let btn3 = document.getElementById("cs_btn");
+  let ngbtn = document.getElementById("ng_btn");
+  let jgbtn = document.getElementById("jg_btn");
+  let tbl = document.getElementById("tbl");
+
+  btn3.disabled = false;
+  ngbtn.disabled = true;
+  jgbtn.disabled = true;
+
+  if (myturn) {
+    tbl.addEventListener('click', cellclick);
+  }
+  else {
+    tbl.removeEventListener('click', cellclick);
+  }
+}
+
 /** Responds to the user clicking on cells in the table.
  * @param {Object} event 
  */
@@ -256,10 +268,20 @@ function cs_buttonclick() {
 
 function ng_buttonclick() {
   createFile();
+  if (mychar == "") {
+    mychar = ponechar;
+  }
+  updateTurnDisplay("You are " + mychar);
+  start();
 }
 
 function jg_buttonclick() {
   loadFile();
+  if (mychar == "") {
+    mychar = ptwochar;
+  }
+  updateTurnDisplay("You are " + mychar);
+  start();
 }
 
 function sg_buttonclick() {
@@ -299,7 +321,7 @@ function updateTurnDisplay() {
 function table() {
   let table = document.createElement("table");
   table.id = "tbl";
-  table.addEventListener('click', cellclick);
+  // table.addEventListener('click', cellclick);
   for (let i=1; i<=rows; i++) {
     let row = table.insertRow();
     for (let j=1; j<=cols; j++) {

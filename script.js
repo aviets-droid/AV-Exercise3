@@ -44,18 +44,17 @@ async function createFile() {
   }
 
   try {
-    filehandle = await window.showSaveFilePicker(opts);
+    [filehandle] = await window.showSaveFilePicker(opts);
     const file = await filehandle.createWritable();
     const contents = JSON.stringify(game);
     console.log(contents);
     await file.write(contents);
     await file.close();
-    console.log("createFile() filehandle: " + filehandle);
   }
   catch (error) {
     console.error("Error creating file: ", error);
   }
-  
+  console.log("createFile() filehandle: " + filehandle);
 }
 
 /** Loads file opened by user, to 'join' a game */
@@ -64,7 +63,7 @@ async function loadFile() {
   const opts1 = {
     startIn: 'desktop',
   }
-  filehandle = await window.showOpenFilePicker(opts1);
+  [filehandle] = await window.showOpenFilePicker(opts1);
 }
 
 /** Read data from json file, update internal state with read data */
@@ -254,8 +253,6 @@ function start() {
   let sgbtn = document.getElementById("sg_btn");
   let tbl = document.getElementById("tbl");
   let playersconnected = false;
-
-
 }
 
 /** Responds to the user clicking on cells in the table.

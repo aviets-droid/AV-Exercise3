@@ -142,12 +142,12 @@ function determineFirst_fxn() {
     myturn = false;
   }
   updateFile();
-  console.log(JSON.stringify(game));
+  console.log("determineFirst_fxn(): " + JSON.stringify(game));
 }
 
 /** Error checking block for determining turn order */
 function determineFirst() {
-  console.log(JSON.stringify(game));
+  console.log("determineFirst(): " + JSON.stringify(game));
   if (game.poneGuess == 0) {
     updateTurnDisplay("Player One has yet to make a guess");
   }
@@ -158,6 +158,7 @@ function determineFirst() {
     updateTurnDisplay("Both players entered the same number, make a different guess");
   }
   else {
+    console.log("determineFirst(): Rolling dice");
     determineFirst_fxn();
   }
 }
@@ -430,7 +431,7 @@ function input_text(placeholder_value) {
 
 function sg_button() {
   let sg_button = document.createElement("button");
-  sg_button.id = "sg_button";
+  sg_button.id = "sg_btn";
   sg_button.textContent = "Submit Guess";
   sg_button.addEventListener("click", sg_buttonclick);
   document.body.appendChild(sg_button);

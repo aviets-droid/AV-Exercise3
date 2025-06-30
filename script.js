@@ -241,17 +241,8 @@ function start() {
 
   readFile();
 
-  if (game.poneconn && game.ptwoconn) {
-    playersconnected = true;
-    ngbtn.disabled = true;
-    jgbtn.disabled = true;
-  }
-
-  if (playersconnected && !turnorderdetermined) {
+  if (!turnorderdetermined) {
     sgbtn.disabled = false;
-  }
-  else if (playersconnected && turnorderdetermined) {
-    btn3.disabled = false;
   }
 }
 
@@ -298,7 +289,7 @@ function ng_buttonclick() {
     mychar = ponechar;
     game.poneconn = true;
   }
-  updateTurnDisplay("You are " + mychar);
+  console.log(mychar);
   start();
 }
 
@@ -308,7 +299,7 @@ function jg_buttonclick() {
     mychar = ptwochar;
     game.ptwoconn = true;
   }
-  updateTurnDisplay("You are " + mychar);
+  console.log(mychar);
   start();
 }
 

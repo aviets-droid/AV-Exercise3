@@ -32,8 +32,6 @@ var game = {
 
 /** Create json file to store game state */
 async function createFile() {
-  resetGame();
-
   const opts = {
     startIn: 'desktop',
     suggestedName: 'TTTdata.json',
@@ -50,10 +48,12 @@ async function createFile() {
   const contents = JSON.stringify(game);
   await file.write(contents);
   await file.close();
+  console.log("createFile() filehandle: " + filehandle);
 }
 
 /** Loads file opened by user, to 'join' a game */
 async function loadFile() {
+  console.log("loadFile() filehandle: " + filehandle);
   const opts1 = {
     startIn: 'desktop',
   }
@@ -62,6 +62,7 @@ async function loadFile() {
 
 /** Read data from json file, update internal state with read data */
 async function readFile() {
+  console.log("readFile() filehandle: " + filehandle);
   const file1 = await filehandle.getFile();
   const contents1 = await file1.text();
   const data = JSON.parse(contents1);
@@ -77,6 +78,7 @@ async function readFile() {
 
 /** Stringify internal state, update json file with new data */
 async function updateFile() {
+  console.log("updateFile() filehandle: " + filehandle);
   const file2 = await filehandle.createWritable();
   let contents2 = JSON.stringify(game);
   await file2.write(contents2);
@@ -86,11 +88,13 @@ async function updateFile() {
 /** Reset internal game state, clear table; use to reset the board after 1st run of game */
 function resetGame() {
   game.state = "NextGame";
-  game.turn = "";
+  game.turn = game.lastwinner;
   // game.lastwinner is updated separately to not overwrite previous winner
-  game.diceroll = 0;
-  game.poneGuess = 0;
-  game.ptwoGuess = 0;
+  game.poneconn = true;
+  game.ptwoconn = true;
+  game.diceroll = -1;
+  game.poneGuess = -1;
+  game.ptwoGuess = -1;
   cleartable();
 }
 
@@ -285,21 +289,19 @@ function cs_buttonclick() {
 
 function ng_buttonclick() {
   createFile();
-  if (mychar == "") {
-    mychar = ponechar;
-    game.poneconn = true;
-  }
+  mychar = ponechar;
+  game.poneconn = true;
   console.log(mychar);
+  updateTurnDisplay("Created game at " + filehandle + " as " + mychar);
   start();
 }
 
 function jg_buttonclick() {
   loadFile();
-  if (mychar == "") {
-    mychar = ptwochar;
-    game.ptwoconn = true;
-  }
+  mychar = ptwochar;
+  game.ptwoconn = true;
   console.log(mychar);
+  updateTurnDisplay("Joined game at " + filehandle + " as " + mychar);
   start();
 }
 
@@ -326,14 +328,9 @@ function updateTitle(ttxt) {
 }
 
 /** Update turn display */
-function updateTurnDisplay() {
+function updateTurnDisplay(tdtxt) {
   let my = document.getElementById("mt");
-  if (myturn) {
-    my.textContent = "It is your turn";
-  }
-  else {
-    my.textContent = "It is your opponent's turn";
-  }
+  my.textContent = tdtxt;
 }
 
 /** Creates the table/playing board visually. */

@@ -43,12 +43,19 @@ async function createFile() {
     }]
   }
 
-  filehandle = await window.showSaveFilePicker(opts);
-  const file = await filehandle.createWritable();
-  const contents = JSON.stringify(game);
-  await file.write(contents);
-  await file.close();
-  console.log("createFile() filehandle: " + filehandle);
+  try {
+    filehandle = await window.showSaveFilePicker(opts);
+    const file = await filehandle.createWritable();
+    const contents = JSON.stringify(game);
+    console.log(contents);
+    await file.write(contents);
+    await file.close();
+    console.log("createFile() filehandle: " + filehandle);
+  }
+  catch (error) {
+    console.error("Error creating file: ", error);
+  }
+  
 }
 
 /** Loads file opened by user, to 'join' a game */
@@ -244,10 +251,6 @@ function start() {
   let playersconnected = false;
 
   readFile();
-
-  if (!turnorderdetermined) {
-    sgbtn.disabled = false;
-  }
 }
 
 /** Responds to the user clicking on cells in the table.
@@ -353,7 +356,6 @@ function cs_button() {
   let cs_button = document.createElement("button");
   cs_button.id = "cs_btn";
   cs_button.textContent = "Start";
-  cs_button.disabled = true;
   cs_button.addEventListener("click", cs_buttonclick);
   document.body.appendChild(cs_button);
 }
@@ -386,7 +388,6 @@ function sg_button() {
   let sg_button = document.createElement("button");
   sg_button.id = "sg_button";
   sg_button.textContent = "Submit Guess";
-  sg_button.disabled = true;
   document.body.appendChild(sg_button);
 }
 

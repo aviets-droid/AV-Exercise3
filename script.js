@@ -284,7 +284,7 @@ function cs_buttonclick() {
   let btn = document.getElementById("cs_btn");
   if (btn.textContent == "Start") {
     btn.textContent = "Clear";
-    play();
+    start();
   }
   else {
     btn.textContent = "Start";
@@ -297,18 +297,19 @@ function ng_buttonclick() {
   game.poneconn = true;
   console.log(mychar);
   createFile().then(x => {
-    updateTurnDisplay("Created game at " + filehandle + " as " + mychar);
-    start();
+    console.log("ng_buttonclick() filehandle: " + filehandle);
+    updateTurnDisplay("Created game as " + mychar);
   });
 }
 
 function jg_buttonclick() {
-  loadFile();
   mychar = ptwochar;
   game.ptwoconn = true;
   console.log(mychar);
-  updateTurnDisplay("Joined game at " + filehandle + " as " + mychar);
-  start();
+  loadFile().then(y => {
+    console.log("jg_buttonclick() filehandle: " + filehandle);
+    updateTurnDisplay("Joined game as " + mychar);
+  });
 }
 
 function sg_buttonclick() {

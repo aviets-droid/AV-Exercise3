@@ -125,7 +125,13 @@ function rollDie(n) {
 
 /** Determines who goes first on the first run of the game */
 function determineFirst_fxn() {
-  let dr = rollDie(6);
+  let dr;
+  if (game.diceroll == 0) {
+    dr = rollDie(6);
+  }
+  else {
+    dr = game.diceroll;
+  }
   console.log("Dice roll: " + dr);
   let onediff = Math.abs(dr - game.poneGuess);
   let twodiff = Math.abs(dr - game.ptwoGuess);
@@ -348,31 +354,33 @@ function jg_buttonclick() {
     document.getElementById("ng_btn").disabled = true;
     document.getElementById("jg_btn").disabled = true;
     readFile().then(() => {
-    game.ptwoconn = true;
-    updateFile();
+      game.ptwoconn = true;
+      updateFile();
   });
   });
 }
 
 /** Process submit guess button click */
 function sg_buttonclick() {
-  let guesselem = document.getElementById("dg");
-  let guess = parseInt(guesselem.value);
+  readFile().then(() => {
+    let guesselem = document.getElementById("dg");
+    let guess = parseInt(guesselem.value);
 
-  if (mychar == ponechar) {
-    game.poneGuess = guess;
-  }
-  else {
-    game.ptwoGuess = guess;
-  }
-  updateTurnDisplay("Guess logged, press Start");
-  updateFile();
-  console.log("sg_buttonclick() game: " + JSON.stringify(game));
-  console.log("sg_buttonclick() mychar: " + mychar);
-  console.log("sg_buttonclick() guesselem: " + guesselem.textContent);
-  console.log("sg_buttonclick() guess (int): " + guess);
-  console.log("sg_buttonclick() p1 guess data: " + game.poneGuess);
-  console.log("sg_buttonclick() p2 guess data: " + game.ptwoGuess);
+    if (mychar == ponechar) {
+      game.poneGuess = guess;
+    }
+    else {
+      game.ptwoGuess = guess;
+    }
+    updateTurnDisplay("Guess logged, press Start");
+    updateFile();
+    console.log("sg_buttonclick() game: " + JSON.stringify(game));
+    console.log("sg_buttonclick() mychar: " + mychar);
+    console.log("sg_buttonclick() guesselem: " + guesselem.textContent);
+    console.log("sg_buttonclick() guess (int): " + guess);
+    console.log("sg_buttonclick() p1 guess data: " + game.poneGuess);
+    console.log("sg_buttonclick() p2 guess data: " + game.ptwoGuess);
+  })
 }
 
 // UI functions

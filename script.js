@@ -353,10 +353,6 @@ function jg_buttonclick() {
     }
     document.getElementById("ng_btn").disabled = true;
     document.getElementById("jg_btn").disabled = true;
-    readFile().then(() => {
-      game.ptwoconn = true;
-      updateFile();
-  });
   });
 }
 
@@ -385,13 +381,17 @@ function sg_buttonclick() {
 
 // UI functions
 
-/** Update title display */
+/** Update title display 
+ * @param {string} ttxt
+*/
 function updateTitle(ttxt) {
   let ttl = document.getElementById("title");
   ttl.textContent = ttxt;
 }
 
-/** Update turn display */
+/** Update turn display 
+ * @param {string} tdtxt
+*/
 function updateTurnDisplay(tdtxt) {
   let my = document.getElementById("mt");
   my.textContent = tdtxt;
@@ -439,7 +439,9 @@ function jg_button() {
   document.body.appendChild(jg_button);
 }
 
-/** Creates guess input field */
+/** Creates guess input field 
+ * @param {string} placeholder_value
+*/
 function input_text(placeholder_value) {
   let inp = document.createElement("INPUT");
   inp.setAttribute("type", "text");

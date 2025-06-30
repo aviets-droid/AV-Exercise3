@@ -253,22 +253,28 @@ function cleartable() {
 
 /** Play */
 function play() {
+  console.log(JSON.stringify(game));
   if (myturn) {
+    updateTurnDisplay("It is your turn");
     tbl.addEventListener('click', cellclick);
   }
   else {
+    updateTurnDisplay("It is your opponent's turn");
     tbl.removeEventListener('click', cellclick);
   }
+  console.log(JSON.stringify(game));
 }
 
 /** Start game, called after player presses new/load game */
 function start() {
+  console.log(JSON.stringify(game));
   readFile().then(z => {
     if (!turnorderdetermined) {
       determineFirst();
     }
     play();
   });
+  console.log(JSON.stringify(game));
 }
 
 /** Responds to the user clicking on cells in the table.
@@ -308,6 +314,7 @@ function cs_buttonclick() {
   }
 }
 
+/** Process new game button click */
 function ng_buttonclick() {
   mychar = ponechar;
   game.poneconn = true;
@@ -317,9 +324,13 @@ function ng_buttonclick() {
     if (!turnorderdetermined) {
       updateTurnDisplay("You are: " + mychar + ", enter a number and Submit Guess below")
     }
+    document.getElementById("ng_btn").disabled = true;
+    document.getElementById("jg_btn").disabled = true;
+    updateFile();
   });
 }
 
+/** Process join game button click */
 function jg_buttonclick() {
   mychar = ptwochar;
   game.ptwoconn = true;
@@ -329,12 +340,16 @@ function jg_buttonclick() {
     if (!turnorderdetermined) {
       updateTurnDisplay("You are: " + mychar + ", enter a number and Submit Guess below")
     }
+    document.getElementById("ng_btn").disabled = true;
+    document.getElementById("jg_btn").disabled = true;
+    updateFile();
   });
 }
 
+/** Process submit guess button click */
 function sg_buttonclick() {
   let guesselem = document.getElementById("dg");
-  let guess = guesselem.textContent;
+  let guess = parseInt(guesselem.textContent);
 
   if (mychar == ponechar) {
     game.poneGuess = guess;
@@ -344,10 +359,12 @@ function sg_buttonclick() {
   }
   updateTurnDisplay("Guess logged, press Start");
   updateFile();
+  console.log(JSON.stringify(game));
 }
 
 // UI functions
 
+/** Update title display */
 function updateTitle(ttxt) {
   let ttl = document.getElementById("title");
   ttl.textContent = ttxt;

@@ -59,11 +59,11 @@ async function createFile() {
 
 /** Loads file opened by user, to 'join' a game */
 async function loadFile() {
-  console.log("loadFile() filehandle: " + filehandle);
   const opts1 = {
     startIn: 'desktop',
   }
   filehandle = await window.showOpenFilePicker(opts1);
+  console.log("loadFile() filehandle: " + filehandle);
 }
 
 /** Read data from json file, update internal state with read data */
@@ -81,6 +81,7 @@ async function readFile() {
     game.diceroll = data.diceroll;
     game.poneGuess = data.poneGuess;
     game.ptwoGuess = data.ptwoGuess;
+    await file1.close();
   }
   catch (error) {
     console.error("Error reading file: " + error);
@@ -358,7 +359,9 @@ function jg_buttonclick() {
 
 /** Process submit guess button click */
 function sg_buttonclick() {
-  readFile().then(() => {
+  console.log("sg_buttonclick() game_preread: " + JSON.stringify(game));
+  readFile().then(s => {
+    console.log("sg_buttonclick() game_postread: " + JSON.stringify(game));
     let guesselem = document.getElementById("dg");
     let guess = parseInt(guesselem.value);
 
@@ -368,15 +371,18 @@ function sg_buttonclick() {
     else {
       game.ptwoGuess = guess;
     }
+    console.log("sg_buttonclick() game_post_internalupdate: " + JSON.stringify(game));
     updateTurnDisplay("Guess logged, press Start");
+  }).then(ss => {
     updateFile();
+    console.log("sg_buttonclick() game_post_fileupdate: " + JSON.stringify(game));
     console.log("sg_buttonclick() game: " + JSON.stringify(game));
     console.log("sg_buttonclick() mychar: " + mychar);
     console.log("sg_buttonclick() guesselem: " + guesselem.textContent);
     console.log("sg_buttonclick() guess (int): " + guess);
     console.log("sg_buttonclick() p1 guess data: " + game.poneGuess);
     console.log("sg_buttonclick() p2 guess data: " + game.ptwoGuess);
-  })
+  });
 }
 
 // UI functions

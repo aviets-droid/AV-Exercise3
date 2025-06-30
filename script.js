@@ -25,7 +25,7 @@ var game = {
   ptwoconn: false,
   diceroll: 0,
   poneGuess: 0,
-  ptwoGuess: 0
+  ptwoGuess: 0,
 };
 
 // JSON File related/internal game state functions
@@ -364,7 +364,12 @@ function sg_buttonclick() {
   }
   updateTurnDisplay("Guess logged, press Start");
   updateFile();
-  console.log(JSON.stringify(game));
+  console.log("sg_buttonclick(): " + JSON.stringify(game));
+  console.log("sg_buttonclick(): " + mychar);
+  console.log("sg_buttonclick(): " + guesselem.textContent);
+  console.log("sg_buttonclick(): " + guess);
+  console.log("sg_buttonclick(): " + game.poneGuess);
+  console.log("sg_buttonclick(): " + game.ptwoGuess);
 }
 
 // UI functions

@@ -124,6 +124,7 @@ function rollDie(n) {
 /** Determines who goes first on the first run of the game */
 function determineFirst_fxn() {
   let dr = rollDie(6);
+  console.log("Dice roll: " + dr);
   let onediff = Math.abs(dr - game.poneGuess);
   let twodiff = Math.abs(dr - game.ptwoGuess);
 
@@ -140,7 +141,6 @@ function determineFirst_fxn() {
   else {
     myturn = false;
   }
-  console.log(JSON.stringify(game));
   updateFile();
   console.log(JSON.stringify(game));
 }

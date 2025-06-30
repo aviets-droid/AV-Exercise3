@@ -121,6 +121,7 @@ function rollDie(n) {
   return Math.floor(Math.random() * n) + 1;
 }
 
+/** Determines who goes first on the first run of the game */
 function determineFirst_fxn() {
   let dr = rollDie(6);
   let onediff = Math.abs(dr - game.poneGuess);
@@ -144,6 +145,7 @@ function determineFirst_fxn() {
   console.log(JSON.stringify(game));
 }
 
+/** Error checking block for determining turn order */
 function determineFirst() {
   console.log(JSON.stringify(game));
   if (game.poneGuess == 0) {
@@ -251,7 +253,7 @@ function cleartable() {
   }
 }
 
-/** Play */
+/** Turn logic while playing */
 function play() {
   console.log(JSON.stringify(game));
   if (myturn) {
@@ -333,7 +335,6 @@ function ng_buttonclick() {
 /** Process join game button click */
 function jg_buttonclick() {
   mychar = ptwochar;
-  game.ptwoconn = true;
   console.log(mychar);
   loadFile().then(y => {
     console.log("jg_buttonclick() filehandle: " + filehandle);
@@ -342,7 +343,10 @@ function jg_buttonclick() {
     }
     document.getElementById("ng_btn").disabled = true;
     document.getElementById("jg_btn").disabled = true;
+    readFile().then(() => {
+    game.ptwoconn = true;
     updateFile();
+  });
   });
 }
 
@@ -410,7 +414,7 @@ function ng_button() {
 
 function jg_button() {
   let jg_button = document.createElement("button");
-  jg_button.id = "cs_btn";
+  jg_button.id = "jg_btn";
   jg_button.textContent = "Join Game";
   jg_button.addEventListener("click", jg_buttonclick);
   document.body.appendChild(jg_button);

@@ -69,18 +69,23 @@ async function loadFile() {
 
 /** Read data from json file, update internal state with read data */
 async function readFile() {
-  console.log("readFile() filehandle: " + filehandle);
-  const file1 = await filehandle.getFile();
-  const contents1 = await file1.text();
-  const data = JSON.parse(contents1);
-  game.state = data.state;
-  game.turn = data.turn;
-  game.lastwinner = data.lastwinner;
-  game.poneconn = data.poneconn;
-  game.ptwoconn = data.ptwoconn;
-  game.diceroll = data.diceroll;
-  game.poneGuess = data.poneGuess;
-  game.ptwoGuess = data.ptwoGuess;
+  try {
+    console.log("readFile() filehandle: " + filehandle);
+    const file1 = await filehandle.getFile();
+    const contents1 = await file1.text();
+    const data = JSON.parse(contents1);
+    game.state = data.state;
+    game.turn = data.turn;
+    game.lastwinner = data.lastwinner;
+    game.poneconn = data.poneconn;
+    game.ptwoconn = data.ptwoconn;
+    game.diceroll = data.diceroll;
+    game.poneGuess = data.poneGuess;
+    game.ptwoGuess = data.ptwoGuess;
+  }
+  catch (error) {
+    console.error("Error reading file: " + error);
+  }
 }
 
 /** Stringify internal state, update json file with new data */
@@ -250,7 +255,7 @@ function start() {
   let tbl = document.getElementById("tbl");
   let playersconnected = false;
 
-  readFile();
+
 }
 
 /** Responds to the user clicking on cells in the table.

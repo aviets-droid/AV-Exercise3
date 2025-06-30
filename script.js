@@ -363,13 +363,14 @@ function input_text(placeholder_value) {
   inp.setAttribute("type", "text");
   inp.id = "dg";
   inp.setAttribute("placeholder", placeholder_value);
+  document.body.appendChild(inp);
 }
 
 function sg_button() {
   let sg_button = document.createElement("button");
   sg_button.id = "sg_button";
   sg_button.textContent = "Submit Guess";
-  //
+  document.body.appendChild(sg_button);
 }
 
 /** Loads the table/playing board and Clear/Start button. */

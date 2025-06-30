@@ -44,7 +44,7 @@ async function createFile() {
   }
 
   try {
-    [filehandle] = await window.showSaveFilePicker(opts);
+    filehandle = await window.showSaveFilePicker(opts);
     const file = await filehandle.createWritable();
     const contents = JSON.stringify(game);
     console.log(contents);
@@ -63,7 +63,7 @@ async function loadFile() {
   const opts1 = {
     startIn: 'desktop',
   }
-  [filehandle] = await window.showOpenFilePicker(opts1);
+  filehandle = await window.showOpenFilePicker(opts1);
 }
 
 /** Read data from json file, update internal state with read data */
@@ -293,12 +293,13 @@ function cs_buttonclick() {
 }
 
 function ng_buttonclick() {
-  createFile();
   mychar = ponechar;
   game.poneconn = true;
   console.log(mychar);
-  updateTurnDisplay("Created game at " + filehandle + " as " + mychar);
-  start();
+  createFile().then(x => {
+    updateTurnDisplay("Created game at " + filehandle + " as " + mychar);
+    start();
+  });
 }
 
 function jg_buttonclick() {

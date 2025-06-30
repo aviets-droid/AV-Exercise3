@@ -292,15 +292,16 @@ function cellclick(event) {
   }
   else {
     myturn = false
-    readFile();
-    if (mychar == ponechar) {
-      game.turn = ptwochar;
-    }
-    else {
-      game.turn = ponechar;
-    }
-    updateFile();
-    play();
+    readFile().then(() => {
+      if (mychar == ponechar) {
+        game.turn = ptwochar;
+      }
+      else {
+        game.turn = ponechar;
+      }
+      updateFile();
+      play();
+    });
   }
 }
 
@@ -354,7 +355,7 @@ function jg_buttonclick() {
 /** Process submit guess button click */
 function sg_buttonclick() {
   let guesselem = document.getElementById("dg");
-  let guess = parseInt(guesselem.textContent);
+  let guess = parseInt(guesselem.value);
 
   if (mychar == ponechar) {
     game.poneGuess = guess;
@@ -364,12 +365,12 @@ function sg_buttonclick() {
   }
   updateTurnDisplay("Guess logged, press Start");
   updateFile();
-  console.log("sg_buttonclick(): " + JSON.stringify(game));
-  console.log("sg_buttonclick(): " + mychar);
-  console.log("sg_buttonclick(): " + guesselem.textContent);
-  console.log("sg_buttonclick(): " + guess);
-  console.log("sg_buttonclick(): " + game.poneGuess);
-  console.log("sg_buttonclick(): " + game.ptwoGuess);
+  console.log("sg_buttonclick() game: " + JSON.stringify(game));
+  console.log("sg_buttonclick() mychar: " + mychar);
+  console.log("sg_buttonclick() guesselem: " + guesselem.textContent);
+  console.log("sg_buttonclick() guess (int): " + guess);
+  console.log("sg_buttonclick() p1 guess data: " + game.poneGuess);
+  console.log("sg_buttonclick() p2 guess data: " + game.ptwoGuess);
 }
 
 // UI functions
@@ -410,6 +411,7 @@ function cs_button() {
   document.body.appendChild(cs_button);
 }
 
+/** Creates clickable new game button */
 function ng_button() {
   let ng_button = document.createElement("button");
   ng_button.id = "ng_btn";
@@ -418,6 +420,7 @@ function ng_button() {
   document.body.appendChild(ng_button);
 }
 
+/** Creates clickable join game button */
 function jg_button() {
   let jg_button = document.createElement("button");
   jg_button.id = "jg_btn";
@@ -426,6 +429,7 @@ function jg_button() {
   document.body.appendChild(jg_button);
 }
 
+/** Creates guess input field */
 function input_text(placeholder_value) {
   let inp = document.createElement("INPUT");
   inp.setAttribute("type", "text");
@@ -434,6 +438,7 @@ function input_text(placeholder_value) {
   document.body.appendChild(inp);
 }
 
+/** Creates clickable submit guess game button */
 function sg_button() {
   let sg_button = document.createElement("button");
   sg_button.id = "sg_btn";

@@ -126,17 +126,11 @@ function determineFirst_fxn() {
   let onediff = Math.abs(dr - game.poneGuess);
   let twodiff = Math.abs(dr - game.ptwoGuess);
 
-  if (onediff == twodiff) {
-    updateTurnDisplay("Both players chose the same number; please make a different guess");
-    turnorderdetermined = false;
-  }
-  else if (onediff < twodiff) {
+  if (onediff < twodiff) {
     game.turn = ponechar;
-    turnorderdetermined = true;
   }
   else {
     game.turn = ptwochar;
-    turnorderdetermined = true;
   }
 
   if (mychar == game.turn) {
@@ -145,13 +139,25 @@ function determineFirst_fxn() {
   else {
     myturn = false;
   }
+  console.log(JSON.stringify(game));
+  updateFile();
+  console.log(JSON.stringify(game));
 }
 
 function determineFirst() {
-  readFile().then(a => {
+  console.log(JSON.stringify(game));
+  if (game.poneGuess == 0) {
+    updateTurnDisplay("Player One has yet to make a guess");
+  }
+  else if (game.ptwoGuess == 0) {
+    updateTurnDisplay("Player Two has yet to make a guess");
+  }
+  else if (game.poneGuess == game.ptwoGuess) {
+    updateTurnDisplay("Both players entered the same number, make a different guess");
+  }
+  else {
     determineFirst_fxn();
-    updateFile();
-  });
+  }
 }
 
 /** Checks if innerText across an array of cells are equal. 
@@ -257,15 +263,11 @@ function play() {
 
 /** Start game, called after player presses new/load game */
 function start() {
-  let btn3 = document.getElementById("cs_btn");
-  let ngbtn = document.getElementById("ng_btn");
-  let jgbtn = document.getElementById("jg_btn");
-  let sgbtn = document.getElementById("sg_btn");
-  let tbl = document.getElementById("tbl");
-  let playersconnected = false;
-
   readFile().then(z => {
-    //
+    if (!turnorderdetermined) {
+      determineFirst();
+    }
+    play();
   });
 }
 
@@ -340,9 +342,8 @@ function sg_buttonclick() {
   else {
     game.ptwoGuess = guess;
   }
-  updateFile().then(c => {
-    determineFirst();
-  });
+  updateTurnDisplay("Guess logged, press Start");
+  updateFile();
 }
 
 // UI functions

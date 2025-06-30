@@ -411,6 +411,7 @@ function sg_button() {
   let sg_button = document.createElement("button");
   sg_button.id = "sg_button";
   sg_button.textContent = "Submit Guess";
+  sg_button.addEventListener("click", sg_buttonclick);
   document.body.appendChild(sg_button);
 }
 

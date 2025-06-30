@@ -89,11 +89,16 @@ async function readFile() {
 
 /** Stringify internal state, update json file with new data */
 async function updateFile() {
-  console.log("updateFile() filehandle: " + filehandle);
-  const file2 = await filehandle.createWritable();
-  let contents2 = JSON.stringify(game);
-  await file2.write(contents2);
-  await file2.close();
+  try {
+    console.log("updateFile() filehandle: " + filehandle);
+    const file2 = await filehandle.createWritable();
+    let contents2 = JSON.stringify(game);
+    await file2.write(contents2);
+    await file2.close();
+  }
+  catch (error) {
+    console.error("Error updating file: " + error);
+  }
 }
 
 /** Reset internal game state, clear table; use to reset the board after 1st run of game */
@@ -116,11 +121,10 @@ function rollDie(n) {
   return Math.floor(Math.random() * n) + 1;
 }
 
-function determineFirst() {
-  readFile();
+function determineFirst_fxn() {
   let dr = rollDie(6);
-  onediff = Math.abs(dr - game.poneGuess);
-  twodiff = Math.abs(dr - game.ptwoGuess);
+  let onediff = Math.abs(dr - game.poneGuess);
+  let twodiff = Math.abs(dr - game.ptwoGuess);
 
   if (onediff == twodiff) {
     updateTurnDisplay("Both players chose the same number; please make a different guess");
@@ -134,7 +138,6 @@ function determineFirst() {
     game.turn = ptwochar;
     turnorderdetermined = true;
   }
-  updateFile();
 
   if (mychar == game.turn) {
     myturn = true;
@@ -142,6 +145,13 @@ function determineFirst() {
   else {
     myturn = false;
   }
+}
+
+function determineFirst() {
+  readFile().then(a => {
+    determineFirst_fxn();
+    updateFile();
+  });
 }
 
 /** Checks if innerText across an array of cells are equal. 
@@ -253,6 +263,10 @@ function start() {
   let sgbtn = document.getElementById("sg_btn");
   let tbl = document.getElementById("tbl");
   let playersconnected = false;
+
+  readFile().then(z => {
+    //
+  });
 }
 
 /** Responds to the user clicking on cells in the table.
@@ -298,7 +312,9 @@ function ng_buttonclick() {
   console.log(mychar);
   createFile().then(x => {
     console.log("ng_buttonclick() filehandle: " + filehandle);
-    updateTurnDisplay("Created game as " + mychar);
+    if (!turnorderdetermined) {
+      updateTurnDisplay("You are: " + mychar + ", enter a number and Submit Guess below")
+    }
   });
 }
 
@@ -308,7 +324,9 @@ function jg_buttonclick() {
   console.log(mychar);
   loadFile().then(y => {
     console.log("jg_buttonclick() filehandle: " + filehandle);
-    updateTurnDisplay("Joined game as " + mychar);
+    if (!turnorderdetermined) {
+      updateTurnDisplay("You are: " + mychar + ", enter a number and Submit Guess below")
+    }
   });
 }
 
@@ -316,15 +334,15 @@ function sg_buttonclick() {
   let guesselem = document.getElementById("dg");
   let guess = guesselem.textContent;
 
-  readFile(); // Ensure internal state is updated
   if (mychar == ponechar) {
     game.poneGuess = guess;
   }
   else {
     game.ptwoGuess = guess;
   }
-  updateFile();
-  determineFirst();
+  updateFile().then(c => {
+    determineFirst();
+  });
 }
 
 // UI functions

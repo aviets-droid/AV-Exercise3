@@ -15,6 +15,7 @@ const ponename = "Player One";
 var filehandle;
 var myturn = false;
 var mychar = "";
+var turnorderdetermined = false;
 
 var game = {
   state: "NewGame",
@@ -108,12 +109,15 @@ function determineFirst() {
 
   if (onediff == twodiff) {
     updateTurnDisplay("Both players chose the same number; please make a different guess");
+    turnorderdetermined = false;
   }
   else if (onediff < twodiff) {
     game.turn = ponechar;
+    turnorderdetermined = true;
   }
   else {
     game.turn = ptwochar;
+    turnorderdetermined = true;
   }
   updateFile();
 
@@ -123,10 +127,6 @@ function determineFirst() {
   else {
     myturn = false;
   }
-}
-
-function play() {
-  //
 }
 
 /** Checks if innerText across an array of cells are equal. 
@@ -194,11 +194,7 @@ function checkwin() {
     iswinner = true;
   }
 
-  if (iswinner) {
-    game.lastwinner = game.turn;
-    updateTurnDisplay(game.turn + " has won!")
-    tbl.removeEventListener('click', com_cellclick);
-  }
+  return iswinner;
 }
 
 /** Sets the text content of the cell specified by row (r) and column (c) to the given string parameter (s).
@@ -224,17 +220,8 @@ function cleartable() {
   }
 }
 
-/** Start game */
-function start() {
-  let btn3 = document.getElementById("cs_btn");
-  let ngbtn = document.getElementById("ng_btn");
-  let jgbtn = document.getElementById("jg_btn");
-  let tbl = document.getElementById("tbl");
-
-  btn3.disabled = false;
-  ngbtn.disabled = true;
-  jgbtn.disabled = true;
-
+/** Play */
+function play() {
   if (myturn) {
     tbl.addEventListener('click', cellclick);
   }
@@ -243,14 +230,52 @@ function start() {
   }
 }
 
+/** Start game, called after player presses new/load game */
+function start() {
+  let btn3 = document.getElementById("cs_btn");
+  let ngbtn = document.getElementById("ng_btn");
+  let jgbtn = document.getElementById("jg_btn");
+  let sgbtn = document.getElementById("sg_btn");
+  let tbl = document.getElementById("tbl");
+  let playersconnected = false;
+
+  readFile();
+
+  if (game.poneconn && game.ptwoconn) {
+    playersconnected = true;
+    ngbtn.disabled = true;
+    jgbtn.disabled = true;
+  }
+
+  if (playersconnected && !turnorderdetermined) {
+    sgbtn.disabled = false;
+  }
+  else if (playersconnected && turnorderdetermined) {
+    btn3.disabled = false;
+  }
+}
+
 /** Responds to the user clicking on cells in the table.
  * @param {Object} event 
  */
 function cellclick(event) {
   let clickedcell = event.target;
-  if (myturn) {
-    clickedcell.textContent = mychar;
-    checkwin();
+  clickedcell.textContent = mychar;
+
+  if (checkwin()) {
+    updateTurnDisplay(mychar + " wins!");
+  }
+  else {
+    myturn = false
+    readFile();
+    if (mychar == ponechar) {
+      game.turn = ptwochar;
+    }
+    else {
+      game.turn = ponechar;
+    }
+    updateFile();
+    play();
   }
 }
 
@@ -259,6 +284,7 @@ function cs_buttonclick() {
   let btn = document.getElementById("cs_btn");
   if (btn.textContent == "Start") {
     btn.textContent = "Clear";
+    play();
   }
   else {
     btn.textContent = "Start";
@@ -270,6 +296,7 @@ function ng_buttonclick() {
   createFile();
   if (mychar == "") {
     mychar = ponechar;
+    game.poneconn = true;
   }
   updateTurnDisplay("You are " + mychar);
   start();
@@ -279,6 +306,7 @@ function jg_buttonclick() {
   loadFile();
   if (mychar == "") {
     mychar = ptwochar;
+    game.ptwoconn = true;
   }
   updateTurnDisplay("You are " + mychar);
   start();
@@ -370,6 +398,7 @@ function sg_button() {
   let sg_button = document.createElement("button");
   sg_button.id = "sg_button";
   sg_button.textContent = "Submit Guess";
+  sg_button.disabled = true;
   document.body.appendChild(sg_button);
 }
 

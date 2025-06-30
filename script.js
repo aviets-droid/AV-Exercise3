@@ -112,6 +112,8 @@ function resetGame() {
   game.poneGuess = -1;
   game.ptwoGuess = -1;
   cleartable();
+  updateTurnDisplay("Press Start to play again");
+  updateFile();
 }
 
 // Computational functions
